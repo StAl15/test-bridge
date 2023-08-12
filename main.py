@@ -14,12 +14,7 @@ class Connection:
     async def receive_video(self):
         while True:
             data = await self.websocket.receive_bytes()
-            # Здесь можно обработать видеопоток и получить массив строк
-            # Но для демонстрации просто добавим информацию о размере данных
             self.strings = f"Received data of size {len(data)} bytes"
-            # print(f"\nReceived data of size {len(data)} bytes")
-            # print(f'DATA: {data}')
-            # print(f"\nSending strings: {self.strings}")
             await self.send_strings()
 
     async def send_strings(self):
