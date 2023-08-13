@@ -4,3 +4,5 @@ gunicorn
 websockets
 uvicorn[standard]
 wsproto
+cv2
+numpy
