@@ -21,21 +21,27 @@ class Connection:
 
     async def receive_video(self):
         while True:
-            data = await self.websocket.receive_bytes()
-            image = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), -1)  # Преобразовать bytes в изображение
-            await self.print_pixel_matrix(image)
+            try:
+                data = await self.websocket.receive_bytes()
+                image = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), -1)  # Преобразовать bytes в изображение
 
-            # Допустим, вы знаете ширину и высоту изображения
-            # width, height = 640, 480
-            # Конвертирование массива байтов в матрицу пикселей
-            image_np = np.frombuffer(data, dtype=np.uint8).reshape()
+                if image is None:
+                    print("Received data is not a valid image")
+                    continue
 
-            # Ваш код для работы с матрицей пикселей (например, отображение изображения)
-            cv2.imshow('image', image_np)
-            cv2.waitKey(1)
-            # results = inference(model, image_np)
-            # self.strings = f"{results}"
-            await self.send_strings()
+                await self.print_pixel_matrix(image)
+
+                # Извлечение высоты и ширины из декодированного изображения
+                height, width, _ = image.shape
+
+                # Ваш код для работы с матрицей пикселей (например, отображение изображения)
+                cv2.imshow('image', image)
+                cv2.waitKey(1)
+                # results = inference(model, image_np)
+                # self.strings = f"{results}"
+                await self.send_strings()
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
     async def print_pixel_matrix(self, image):
         print(image)
