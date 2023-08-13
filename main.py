@@ -1,7 +1,6 @@
-import time
-
+import numpy as np
+import cv2
 from fastapi import FastAPI, WebSocket
-from typing import List
 
 app = FastAPI()
 
@@ -14,12 +13,15 @@ class Connection:
     async def receive_video(self):
         while True:
             data = await self.websocket.receive_bytes()
-            # Здесь можно обработать видеопоток и получить массив строк
-            # Но для демонстрации просто добавим информацию о размере данных
-            self.strings = f"Received data of size {len(data)} bytes"
-            # print(f"\nReceived data of size {len(data)} bytes")
-            # print(f'DATA: {data}')
-            # print(f"\nSending strings: {self.strings}")
+
+            # Декодируем изображение из сжатого формата (например, JPEG)
+            image_np = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+            if image_np is not None:
+                self.strings = f"Received image of size {image_np.shape[1]}x{image_np.shape[0]}"
+            else:
+                self.strings = "Failed to decode image"
+
             await self.send_strings()
 
     async def send_strings(self):
