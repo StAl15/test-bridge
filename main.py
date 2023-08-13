@@ -1,50 +1,26 @@
 import time
-# from webcam_demo import init_model
-# from webcam_demo import show_results
-# from webcam_demo import parse_args
-# from model import Predictor
-# from webcam_demo import inference
+
 from fastapi import FastAPI, WebSocket
 from typing import List
-import cv2
-import numpy as np
 
-# args = parse_args()
-# model = init_model('config.json')
 app = FastAPI()
 
 
 class Connection:
-    def init(self, websocket: WebSocket):
+    def __init__(self, websocket: WebSocket):
         self.websocket = websocket
         self.strings: str = ''
 
     async def receive_video(self):
         while True:
-            try:
-                data = await self.websocket.receive_bytes()
-                image = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), -1)  # Преобразовать bytes в изображение
-
-                if image is None:
-                    print("Received data is not a valid image")
-                    continue
-
-                await self.print_pixel_matrix(image)
-
-                # Извлечение высоты и ширины из декодированного изображения
-                height, width, _ = image.shape
-
-                # Ваш код для работы с матрицей пикселей (например, отображение изображения)
-                cv2.imshow('image', image)
-                cv2.waitKey(1)
-                # results = inference(model, image_np)
-                # self.strings = f"{results}"
-                await self.send_strings()
-            except Exception as e:
-                print(f"An error occurred: {e}")
-
-    async def print_pixel_matrix(self, image):
-        print(image)
+            data = await self.websocket.receive_bytes()
+            # Здесь можно обработать видеопоток и получить массив строк
+            # Но для демонстрации просто добавим информацию о размере данных
+            self.strings = f"Received data of size {len(data)} bytes"
+            # print(f"\nReceived data of size {len(data)} bytes")
+            # print(f'DATA: {data}')
+            # print(f"\nSending strings: {self.strings}")
+            await self.send_strings()
 
     async def send_strings(self):
         await self.websocket.send_json(self.strings)
