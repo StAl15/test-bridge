@@ -26,9 +26,9 @@ class Connection:
             await self.print_pixel_matrix(image)
 
             # Допустим, вы знаете ширину и высоту изображения
-            width, height = 640, 480
+            # width, height = 640, 480
             # Конвертирование массива байтов в матрицу пикселей
-            image_np = np.frombuffer(data, dtype=np.uint8).reshape((height, width, 3))
+            image_np = np.frombuffer(data, dtype=np.uint8).reshape()
 
             # Ваш код для работы с матрицей пикселей (например, отображение изображения)
             cv2.imshow('image', image_np)
